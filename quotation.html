@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>따옴표 교정기</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; line-height: 1.6; }
+    textarea { width: 100%; height: 150px; margin-bottom: 1em; }
+    button { padding: 0.5em 1em; margin-top: 0.5em; }
+    #output, #log { white-space: pre-wrap; border: 1px solid #ccc; padding: 1em; margin-top: 1em; background: #f9f9f9; }
+    h1, h2 { color: #333; }
+    code { background: #eee; padding: 2px 4px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>따옴표 교정기</h1>
+  <p>
+    이 도구는 텍스트 안의 잘못된 따옴표를 한국어 맞춤법에 맞는 <strong>둥근 따옴표</strong>로 교정해 줍니다.<br>
+    - 작은따옴표 <code>'텍스트'</code> → <code>‘텍스트’</code><br>
+    - 큰따옴표 <code>"텍스트"</code> → <code>“텍스트”</code><br><br>
+    이미 올바른 둥근 따옴표(<code>‘ ’</code>, <code>“ ”</code>)는 그대로 유지됩니다.
+  </p>
+
+  <h2>사용 방법</h2>
+  <ol>
+    <li>아래 입력창에 텍스트(HTML 포함)를 붙여넣습니다.</li>
+    <li><strong>교정</strong> 버튼을 누릅니다.</li>
+    <li>결과 창에서 교정된 텍스트와 교정 내역을 확인합니다.</li>
+    <li>필요하면 <strong>복사</strong> 버튼으로 클립보드에 저장합니다.</li>
+  </ol>
+
+  <textarea id="input" placeholder="여기에 텍스트를 붙여넣으세요..."></textarea>
+  <br>
+  <button onclick="fixQuotes()">교정</button>
+  <button onclick="copyResult()">결과 복사</button>
+  
+  <h2>교정된 결과</h2>
+  <div id="output"></div>
+
+  <h2>교정 내역</h2>
+  <div id="log"></div>
+
+  <script>
+    function fixQuotes() {
+      let text = document.getElementById("input").value;
+      let log = [];
+
+      // 작은따옴표 '...' → ‘...’
+      text = text.replace(/'([^']*)'/g, function(match, p1) {
+        log.push("작은따옴표 교정: " + match + " → ‘" + p1 + "’");
+        return "‘" + p1 + "’";
+      });
+
+      // 큰따옴표 "..." → “...”
+      text = text.replace(/"([^"]*)"/g, function(match, p1) {
+        log.push("큰따옴표 교정: " + match + " → “" + p1 + "”");
+        return "“" + p1 + "”";
+      });
+
+      document.getElementById("output").textContent = text;
+      document.getElementById("log").textContent = log.length > 0 ? log.join("\n") : "교정할 따옴표가 없습니다.";
+    }
+
+    function copyResult() {
+      let result = document.getElementById("output").textContent;
+      if (result.trim() === "") {
+        alert("먼저 교정할 텍스트를 입력하고 변환하세요!");
+        return;
+      }
+      navigator.clipboard.writeText(result).then(() => {
+        alert("결과가 클립보드에 복사되었습니다!");
+      });
+    }
+  </script>
+</body>
+</html>
